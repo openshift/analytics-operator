@@ -1,0 +1,31 @@
+# permissions for end users to edit anomalyengines.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: anomalyengine-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: anomaly-operator
+    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: anomalyengine-editor-role
+rules:
+- apiGroups:
+  - backend.anomaly.io
+  resources:
+  - anomalyengines
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - backend.anomaly.io
+  resources:
+  - anomalyengines/status
+  verbs:
+  - get

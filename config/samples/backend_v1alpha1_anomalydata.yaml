@@ -1,0 +1,21 @@
+apiVersion: backend.anomaly.io/v1alpha1
+kind: AnomalyData
+metadata:
+  labels:
+    app.kubernetes.io/name: anomalydata
+    app.kubernetes.io/instance: anomalydata-sample
+    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: anomaly-operator
+  name: anomalydata-sample
+spec:
+  Anomalyname:  etcd_object_namespaces
+  Config:
+    Max:    100
+    Min:    60
+    Query:  max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
+  Method:   min_max
+  Metricdata:
+    Groupeddata:  {"resource": "namespaces"}
+    Latestvalue:  121
+    Timestamp:    1695804362

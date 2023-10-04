@@ -1,0 +1,19 @@
+kube_configmap_info:
+  method: percentage_change
+  query: count(kube_configmap_info)
+  step: 2  # minutes
+  percentage_change: 60  # percentage
+  period_range: 60  # minutes
+  have_multi_result_data: False
+etcd_object_namespaces:
+  method: min_max
+  query: max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
+  min: 60
+  max: 100
+etcd_object_secrets_config_maps:
+  method: percentage_change
+  query: max(apiserver_storage_objects{resource=~"secrets|configmaps"}) by (resource)
+  step: 2  # minutes
+  percentage_change: 60  # percentage
+  period_range: 60  # minutes
+  have_multi_result_data: True
