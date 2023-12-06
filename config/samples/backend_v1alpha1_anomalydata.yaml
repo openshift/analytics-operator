@@ -9,13 +9,13 @@ metadata:
     app.kubernetes.io/created-by: anomaly-operator
   name: anomalydata-sample
 spec:
-  Anomalyname:  etcd_object_namespaces
-  Config:
-    Max:    100
-    Min:    60
-    Query:  max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
-  Method:   min_max
-  Metricdata:
-    Groupeddata:  {"resource": "namespaces"}
-    Latestvalue:  121
-    Timestamp:    1695804362
+  anomalyname: etcd_object_namespaces
+  config:
+    max: 100
+    min: 60
+    query: max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
+  method: min_max
+  metricdata:
+    groupeddata: '{ "resource": "namespaces" }'
+    latestvalue: 121
+    timestamp: 1695804362
