@@ -76,18 +76,6 @@ make deploy OPERATOR_IMG=<some-registry>/observability-analytics-operator:0.0.1
 kubectl apply -f config/samples/
 ```
 
-2. Build and push your image to the location specified by `IMG`:
-
-```sh
-make docker-build docker-push IMG=<some-registry>/anomaly-operator:tag
-```
-
-3. Deploy the controller to the cluster with the image specified by `IMG`:
-
-```sh
-make deploy IMG=<some-registry>/anomaly-operator:tag
-```
-
 ### Uninstall CRDs
 To delete the CRDs from the cluster:
 

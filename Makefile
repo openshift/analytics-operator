@@ -12,8 +12,8 @@ VERSION ?= 0.0.1
 # IMG_BASE defines the docker.io namespace and part of the image name for remote images.
 # This variable is used to construct full image tags for bundle and catalog images.
 #
-# For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
-# openshiftanalytics/anomaly-operator-bundle:v$VERSION and sustainable_computing_io/anomaly-operator-catalog:$VERSION
+# For example, running 'make operator-build operator-push bundle-build bundle-push catalog-build catalog-push' will build and push both
+# quay.io/openshiftanalytics/observability-analytics-operator:$VERSION, quay.io/openshiftanalytics/observability-analytics-operator-bundle:$VERSION and quay.io/openshiftanalytics/observability-analytics-operator-catalog:$VERSION
 IMG_BASE ?= quay.io/openshiftanalytics
 
 
@@ -46,7 +46,7 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
-BUNDLE_IMG ?= $(IMG_BASE)/anomaly-operator-bundle:$(VERSION)
+BUNDLE_IMG ?= $(IMG_BASE)/observability-analytics-operator-bundle:$(VERSION)
 
 # BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
 BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
