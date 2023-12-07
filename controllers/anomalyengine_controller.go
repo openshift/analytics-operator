@@ -36,7 +36,7 @@ type AnomalyEngineReconciler struct {
 }
 
 // common to all components deployed by operator
-//+kubebuilder:rbac:groups=core,resources=namespaces;services;configmaps;serviceaccounts,verbs=list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=namespaces;services;configmaps;secrets;serviceaccounts,verbs=list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=batch,resources=cronjobs,verbs=*
 //+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=*,verbs=*
 

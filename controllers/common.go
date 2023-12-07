@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"os"
 
 	backendv1alpha1 "github.com/k8s-analytics/anomaly-operator/api/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -20,6 +19,7 @@ import (
 var anomalyConfigFileName = "anomaly_config.yaml"
 var storageAdminRoleName = "osa-crd-admin"
 var storageServiceAccountName = "osa-crd-sa-user"
+var configmapName = "osa-anomaly-config"
 
 func (r *AnomalyEngineReconciler) ensureNamespace(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine) (*reconcile.Result, error) {
 
@@ -336,7 +336,6 @@ func (r *AnomalyEngineReconciler) ensureConfigMap(request reconcile.Request, ins
 	var log = logf.Log.WithName("anomay-detection -> Configmap ->")
 
 	//  check configmap exist
-	configmapName := instance.Spec.AnomalyConfigmpName
 	configmapFound := &corev1.ConfigMap{}
 	err := r.Client.Get(context.TODO(), types.NamespacedName{
 		Name:      configmapName,
@@ -348,11 +347,7 @@ func (r *AnomalyEngineReconciler) ensureConfigMap(request reconcile.Request, ins
 
 		// Create the configmap
 		log.Info("Creating a new comfigmap", "name", configmapName)
-		fileContent, err := os.ReadFile("deploy/anomaly_config.yaml")
-		if err != nil {
-			return &reconcile.Result{}, err
-		}
-		data := string(fileContent)
+		data := string(instance.Spec.AnomalyQueryConfiguration)
 		err = r.Client.Create(context.TODO(), &corev1.ConfigMap{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: corev1.SchemeGroupVersion.String(),
@@ -432,7 +427,7 @@ func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, insta
 										VolumeSource: corev1.VolumeSource{
 											ConfigMap: &corev1.ConfigMapVolumeSource{
 												LocalObjectReference: corev1.LocalObjectReference{
-													Name: instance.Spec.AnomalyConfigmpName,
+													Name: configmapName,
 												},
 											},
 										},
