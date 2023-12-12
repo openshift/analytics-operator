@@ -35,6 +35,12 @@ type AnomalyEngineReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// common to all components deployed by operator
+//+kubebuilder:rbac:groups=core,resources=namespaces;services;configmaps;secrets;serviceaccounts,verbs=list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=batch,resources=cronjobs,verbs=*
+//+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=*,verbs=*
+
+// RBAC for running anomaly operator
 //+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines/finalizers,verbs=update

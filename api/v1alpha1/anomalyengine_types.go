@@ -50,7 +50,10 @@ type AnomalyEngineSpec struct {
 	Namespace                 string                    `json:"namespace,omitempty"`
 	ServiceAccountRoleBinding ServiceAccountRoleBinding `json:"serviceaccountrolebinding,omitempty"`
 	CronJobConfig             CronJobConfig             `json:"cronjobconfig,omitempty"`
-	AnomalyConfigmpName       string                    `json:"anomalyconfigmpname,omitempty"`
+	// AnomalyQueryConfiguration defines the query/configuration to detect anomaly
+	// You can take a look on below link to understand how to define these data structure
+	// https://github.com/openshift/incluster-anomaly-detection/tree/main#understanding-anomaly-configurations
+	AnomalyQueryConfiguration string `json:"anomalyqueryconfiguration,omitempty"`
 }
 
 // AnomalyEngineStatus defines the observed state of AnomalyEngine

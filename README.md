@@ -59,24 +59,21 @@ make manifests
 
 More information can be found via the [Kubebuilder Documentation](https://book.kubebuilder.io/introduction.html)
 
-### Running on the cluster 
-// TODO - Update this section
-1. Install Instances of Custom Resources:
+### Running on the cluster using pre-published image
+
+You can use the image from [quay.io](https://quay.io/repository/openshiftanalytics/observability-analytics-operator?tab=tags) to deploy kepler-operator.
 
 ```sh
+make deploy OPERATOR_IMG=quay.io/openshiftanalytics/observability-analytics-operator:0.0.1
 kubectl apply -f config/samples/
 ```
 
-2. Build and push your image to the location specified by `IMG`:
+Alternatively, if you like to build and use your own image,
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/anomaly-operator:tag
-```
-
-3. Deploy the controller to the cluster with the image specified by `IMG`:
-
-```sh
-make deploy IMG=<some-registry>/anomaly-operator:tag
+make operator-build operator-push IMG_BASE=<some-registry>
+make deploy OPERATOR_IMG=<some-registry>/observability-analytics-operator:0.0.1
+kubectl apply -f config/samples/
 ```
 
 ### Uninstall CRDs

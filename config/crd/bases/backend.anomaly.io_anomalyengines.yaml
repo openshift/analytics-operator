@@ -35,7 +35,10 @@ spec:
           spec:
             description: AnomalyEngineSpec defines the desired state of AnomalyEngine
             properties:
-              anomalyconfigmpname:
+              anomalyqueryconfiguration:
+                description: AnomalyQueryConfiguration defines the query/configuration
+                  to detect anomaly You can take a look on below link to understand
+                  how to define these data structure https://github.com/openshift/incluster-anomaly-detection/tree/main#understanding-anomaly-configurations
                 type: string
               cronjobconfig:
                 description: CronJobConfig defines configuration required to setup
