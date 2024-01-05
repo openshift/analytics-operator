@@ -48,6 +48,28 @@ oc describe anomalydata 2023-09-27-08-46-02-etcd-object-namespaces-namespaces -n
 
 **NOTE:** You can also run this in one step by running: `make install run`
 
+### Do e2e Testing
+We have created e2e test script using which we can test operator is working as expected or not into openshift cluster. 
+
+**Prerequisite** : 
+1. You should have access to the container registry for pushing image to regsitry. 
+2. You should have openshift cluster, login into the cluster using the following command from your terminal. 
+```sh
+oc login --token=*** --server=https://example.com:6443
+```
+Then execute the below command to test your operator 
+```sh
+sh tests/run-e2e.sh 
+```
+This script performs the following operations to validate your operator works as expected in openshift cluster.
+1. Build your operator image and push to the registry.
+2. Deploy the operator into openshift cluster using the created container.
+3. Create CR for the anomaly engine.
+4. Generate anomaly data and test whether the engine is able to detect anomaly or not for Min/Max as well as Percentage Change type. 
+5. Delete the operator and related resources from the cluster. 
+6. Finally it should display the message "✅ All looks good :)" if everything works as expected.  
+
+
 ### Modifying the API definitions
 If you are editing the API definitions, generate the manifests such as CRs or CRDs using:
 

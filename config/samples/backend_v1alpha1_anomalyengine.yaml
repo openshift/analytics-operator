@@ -35,7 +35,7 @@ spec:
       have_multi_result_data: True
   cronjobconfig:
     name: "osa-anomaly-detection"
-    schedule: "*/5 * * * *"
+    schedule: "*/1 * * * *"
     image: quay.io/openshiftanalytics/incluster-anomaly:v1
     anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
     resource:
