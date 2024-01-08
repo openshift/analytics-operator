@@ -8,7 +8,7 @@
 # Usage:
 #   VERSION is the tag for the operator image in quay,PREV_VERSION is the version we want to replace
 #   FORK is your personal FORK from  community-operators-prod repository 
-#   $ VERSION=1.1.2 PREV_VERSION=1.1.1 FORK=<your-fork> PRCREATE=<true/false> ./hack/publish-to-operator-hub.sh
+#   $ VERSION=1.1.2 PREV_VERSION=1.1.1 FORK=<your-fork> PRCREATE=<true/false> ./hack/create_operatorhub_pr.sh
 #
 
 set -e
@@ -36,8 +36,8 @@ COMMUNITY_OPERATOR_PROD_GITHUB_ORG=${COMMUNITY_OPERATOR_PROD_GITHUB_ORG:-redhat-
 make bundle IMG=$OPERATOR_IMG
 
 # Build bundle and catalog images
-make bundle-build bundle-push BUNDLE_IMG=$BUNDLE_IMG IMG=$OPERATOR_IMG
-make catalog-build catalog-push CATALOG_IMG=$CATALOG_IMG BUNDLE_IMGS=$BUNDLE_IMG BUNDLE_IMG=$BUNDLE_IMG IMG=$OPERATOR_IMG
+make bundle-build bundle-push
+make catalog-build catalog-push
 
 # Add replaces to dependency graph for upgrade path
 if ! grep -qF 'replaces: anomaly-operator.v${PREV_VERSION}' bundle/manifests/anomaly-operator.clusterserviceversion.yaml; then
