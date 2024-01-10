@@ -27,7 +27,7 @@ deploy_operator() {
 	}
 
     run make deploy VERSION="$VERSION"
-    wait_for_operators_ready "anomaly-operator-system"
+    wait_for_operators_ready "analytics-operator-system"
 }
 
 # Build operator image and push to container registry 
@@ -52,12 +52,12 @@ wait_for_operators_ready() {
 
 	local tries=30
 	while [[ $tries -gt 0 ]] &&
-		! kubectl -n "$ns" rollout status deploy/anomaly-operator-controller-manager; do
+		! kubectl -n "$ns" rollout status deploy/analytics-operator-controller-manager; do
 		sleep 10
 		((tries--))
 	done
 
-	kubectl wait -n "$ns" --for=condition=Available deploy/anomaly-operator-controller-manager --timeout=300s
+	kubectl wait -n "$ns" --for=condition=Available deploy/analytics-operator-controller-manager --timeout=300s
 
 	ok "Analytics operator is up and running"
 }
@@ -67,7 +67,7 @@ create_cr_for_anomaly_engine(){
 
     header "Configuring Anomaly Engine by creating CR"
 
-    kubectl apply -f config/samples/backend_v1alpha1_anomalyengine.yaml
+    kubectl apply -f config/samples/observability-analytics_v1alpha1_anomalyengine.yaml
     
     if ! kubectl -n "osa-anomaly-detection" get cronjob | grep "osa-anomaly-detection"; then
         fail "Cronjob not present to detect Anomaly"

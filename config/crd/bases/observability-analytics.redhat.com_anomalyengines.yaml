@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.1
   creationTimestamp: null
-  name: anomalyengines.backend.anomaly.io
+  name: anomalyengines.observability-analytics.redhat.com
 spec:
-  group: backend.anomaly.io
+  group: observability-analytics.redhat.com
   names:
     kind: AnomalyEngine
     listKind: AnomalyEngineList

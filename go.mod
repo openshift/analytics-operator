@@ -1,4 +1,4 @@
-module github.com/k8s-analytics/anomaly-operator
+module github.com/openshift/analytics-operator
 
 go 1.20
 

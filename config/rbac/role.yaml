@@ -6,58 +6,6 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalydata
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalydata/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalydata/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalyengines
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalyengines/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - backend.anomaly.io
-  resources:
-  - anomalyengines/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
   - batch
   resources:
   - cronjobs
@@ -78,6 +26,58 @@ rules:
   - patch
   - update
   - watch
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalydata
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalydata/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalydata/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalyengines
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalyengines/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - observability-analytics.redhat.com
+  resources:
+  - anomalyengines/status
+  verbs:
+  - get
+  - patch
+  - update
 - apiGroups:
   - rbac.authorization.k8s.io
   resources:

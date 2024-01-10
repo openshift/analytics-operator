@@ -1,12 +1,12 @@
-apiVersion: backend.anomaly.io/v1alpha1
+apiVersion: observability-analytics.redhat.com/v1alpha1
 kind: AnomalyData
 metadata:
   labels:
     app.kubernetes.io/name: anomalydata
     app.kubernetes.io/instance: anomalydata-sample
-    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/part-of: analytics-operator
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: anomaly-operator
+    app.kubernetes.io/created-by: analytics-operator
   name: anomalydata-sample
 spec:
   anomalyname: etcd_object_namespaces

@@ -1,9 +1,9 @@
-package controllers
+package controller
 
 import (
 	"context"
 
-	backendv1alpha1 "github.com/k8s-analytics/anomaly-operator/api/v1alpha1"
+	v1alpha1 "github.com/openshift/analytics-operator/api/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	rbac "k8s.io/api/rbac/v1"
@@ -21,7 +21,7 @@ var storageAdminRoleName = "osa-crd-admin"
 var storageServiceAccountName = "osa-crd-sa-user"
 var configmapName = "osa-anomaly-config"
 
-func (r *AnomalyEngineReconciler) ensureNamespace(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine) (*reconcile.Result, error) {
+func (r *AnomalyEngineReconciler) ensureNamespace(request reconcile.Request, instance *v1alpha1.AnomalyEngine) (*reconcile.Result, error) {
 
 	var log = logf.Log.WithName("anomay-detection -> Namespace")
 
@@ -63,14 +63,14 @@ func (r *AnomalyEngineReconciler) ensureNamespace(request reconcile.Request, ins
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) getServiceAccountForStorage(instance *backendv1alpha1.AnomalyEngine) *corev1.ServiceAccount {
+func (r *AnomalyEngineReconciler) getServiceAccountForStorage(instance *v1alpha1.AnomalyEngine) *corev1.ServiceAccount {
 	sa := &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ServiceAccount",
 			APIVersion: corev1.SchemeGroupVersion.String(),
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "osa-crd-sa-user",
+			Name:      storageServiceAccountName,
 			Namespace: instance.Spec.Namespace,
 		},
 	}
@@ -78,7 +78,7 @@ func (r *AnomalyEngineReconciler) getServiceAccountForStorage(instance *backendv
 	return sa
 }
 
-func (r *AnomalyEngineReconciler) getServiceAccountForAnomalyEngine(instance *backendv1alpha1.AnomalyEngine) *corev1.ServiceAccount {
+func (r *AnomalyEngineReconciler) getServiceAccountForAnomalyEngine(instance *v1alpha1.AnomalyEngine) *corev1.ServiceAccount {
 	sa := &corev1.ServiceAccount{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ServiceAccount",
@@ -95,7 +95,7 @@ func (r *AnomalyEngineReconciler) getServiceAccountForAnomalyEngine(instance *ba
 }
 
 func (r *AnomalyEngineReconciler) ensureServiceAccount(request reconcile.Request,
-	instance *backendv1alpha1.AnomalyEngine,
+	instance *v1alpha1.AnomalyEngine,
 	sa *corev1.ServiceAccount,
 	createSecret bool,
 ) (*reconcile.Result, error) {
@@ -153,7 +153,7 @@ func (r *AnomalyEngineReconciler) ensureServiceAccount(request reconcile.Request
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) getStorageAdminRole(instance *backendv1alpha1.AnomalyEngine) *rbac.Role {
+func (r *AnomalyEngineReconciler) getStorageAdminRole(instance *v1alpha1.AnomalyEngine) *rbac.Role {
 	role := &rbac.Role{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "osa-crd-admin",
@@ -163,7 +163,7 @@ func (r *AnomalyEngineReconciler) getStorageAdminRole(instance *backendv1alpha1.
 			{
 				Verbs:     []string{"get", "watch", "list", "create", "update", "delete"},
 				Resources: []string{"anomalydata"},
-				APIGroups: []string{"backend.anomaly.io"},
+				APIGroups: []string{"observability-analytics.redhat.com"},
 			},
 		},
 	}
@@ -173,7 +173,7 @@ func (r *AnomalyEngineReconciler) getStorageAdminRole(instance *backendv1alpha1.
 }
 
 func (r *AnomalyEngineReconciler) ensureRole(request reconcile.Request,
-	instance *backendv1alpha1.AnomalyEngine,
+	instance *v1alpha1.AnomalyEngine,
 	role *rbac.Role,
 ) (*reconcile.Result, error) {
 
@@ -207,7 +207,7 @@ func (r *AnomalyEngineReconciler) ensureRole(request reconcile.Request,
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) ensureRoleBinding(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine,
+func (r *AnomalyEngineReconciler) ensureRoleBinding(request reconcile.Request, instance *v1alpha1.AnomalyEngine,
 	rb *rbac.RoleBinding) (*reconcile.Result, error) {
 
 	var log = logf.Log.WithName("anomay-detection -> RoleBinding ->")
@@ -242,7 +242,7 @@ func (r *AnomalyEngineReconciler) ensureRoleBinding(request reconcile.Request, i
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) ensureClusterRoleBinding(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine,
+func (r *AnomalyEngineReconciler) ensureClusterRoleBinding(request reconcile.Request, instance *v1alpha1.AnomalyEngine,
 	rb *rbac.ClusterRoleBinding) (*reconcile.Result, error) {
 
 	var log = logf.Log.WithName("anomay-detection -> ClusterRoleBinding ->")
@@ -277,7 +277,7 @@ func (r *AnomalyEngineReconciler) ensureClusterRoleBinding(request reconcile.Req
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) getRoleBindingForStorageServiceAccount(instance *backendv1alpha1.AnomalyEngine) *rbac.RoleBinding {
+func (r *AnomalyEngineReconciler) getRoleBindingForStorageServiceAccount(instance *v1alpha1.AnomalyEngine) *rbac.RoleBinding {
 	rb := &rbac.RoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "RoleBinding",
@@ -304,7 +304,7 @@ func (r *AnomalyEngineReconciler) getRoleBindingForStorageServiceAccount(instanc
 	return rb
 }
 
-func (r *AnomalyEngineReconciler) getRoleBindingForAnomalyEngine(instance *backendv1alpha1.AnomalyEngine) *rbac.ClusterRoleBinding {
+func (r *AnomalyEngineReconciler) getRoleBindingForAnomalyEngine(instance *v1alpha1.AnomalyEngine) *rbac.ClusterRoleBinding {
 	rb := &rbac.ClusterRoleBinding{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "RoleBinding",
@@ -331,7 +331,7 @@ func (r *AnomalyEngineReconciler) getRoleBindingForAnomalyEngine(instance *backe
 	return rb
 }
 
-func (r *AnomalyEngineReconciler) ensureConfigMap(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine) (*reconcile.Result, error) {
+func (r *AnomalyEngineReconciler) ensureConfigMap(request reconcile.Request, instance *v1alpha1.AnomalyEngine) (*reconcile.Result, error) {
 
 	var log = logf.Log.WithName("anomay-detection -> Configmap ->")
 
@@ -377,7 +377,7 @@ func (r *AnomalyEngineReconciler) ensureConfigMap(request reconcile.Request, ins
 	return nil, nil
 }
 
-func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, instance *backendv1alpha1.AnomalyEngine) (*reconcile.Result, error) {
+func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, instance *v1alpha1.AnomalyEngine) (*reconcile.Result, error) {
 
 	var log = logf.Log.WithName("anomay-detection -> CronJob ->")
 

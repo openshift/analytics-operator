@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Redhat.
+Copyright 2024 Redhat.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	backendv1alpha1 "github.com/k8s-analytics/anomaly-operator/api/v1alpha1"
-	"github.com/k8s-analytics/anomaly-operator/controllers"
+	observabilityanalyticsv1alpha1 "github.com/openshift/analytics-operator/api/v1alpha1"
+	"github.com/openshift/analytics-operator/internal/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -44,7 +44,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(backendv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(observabilityanalyticsv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -71,7 +71,7 @@ func main() {
 		Port:                   9443,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "e5554444.anomaly.io",
+		LeaderElectionID:       "f5007a38.redhat.com",
 		// LeaderElectionReleaseOnCancel defines if the leader should step down voluntarily
 		// when the Manager ends. This requires the binary to immediately end when the
 		// Manager is stopped, otherwise, this setting is unsafe. Setting this significantly
@@ -89,14 +89,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&controllers.AnomalyEngineReconciler{
+	if err = (&controller.AnomalyEngineReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "AnomalyEngine")
 		os.Exit(1)
 	}
-	if err = (&controllers.AnomalyDataReconciler{
+	if err = (&controller.AnomalyDataReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {

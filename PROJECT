@@ -2,31 +2,31 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: anomaly.io
+domain: redhat.com
 layout:
-- go.kubebuilder.io/v3
+- go.kubebuilder.io/v4-alpha
 plugins:
   manifests.sdk.operatorframework.io/v2: {}
   scorecard.sdk.operatorframework.io/v2: {}
-projectName: anomaly-operator
-repo: github.com/k8s-analytics/anomaly-operator
+projectName: analytics-operator
+repo: github.com/openshift/analytics-operator
 resources:
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: anomaly.io
-  group: backend
+  domain: redhat.com
+  group: observability-analytics
   kind: AnomalyEngine
-  path: github.com/k8s-analytics/anomaly-operator/api/v1alpha1
+  path: github.com/openshift/analytics-operator/api/v1alpha1
   version: v1alpha1
 - api:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: anomaly.io
-  group: backend
+  domain: redhat.com
+  group: observability-analytics
   kind: AnomalyData
-  path: github.com/k8s-analytics/anomaly-operator/api/v1alpha1
+  path: github.com/openshift/analytics-operator/api/v1alpha1
   version: v1alpha1
 version: "3"

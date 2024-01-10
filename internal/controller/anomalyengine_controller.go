@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Redhat.
+Copyright 2024 Redhat.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package controller
 
 import (
 	"context"
@@ -25,7 +25,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	v1alpha1 "github.com/k8s-analytics/anomaly-operator/api/v1alpha1"
+	v1alpha1 "github.com/openshift/analytics-operator/api/v1alpha1"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
@@ -41,9 +41,9 @@ type AnomalyEngineReconciler struct {
 //+kubebuilder:rbac:groups=rbac.authorization.k8s.io,resources=*,verbs=*
 
 // RBAC for running anomaly operator
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalyengines/finalizers,verbs=update
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalyengines,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalyengines/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalyengines/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

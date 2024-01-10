@@ -6,13 +6,13 @@ metadata:
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/instance: anomalyengine-viewer-role
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: anomaly-operator
-    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/created-by: analytics-operator
+    app.kubernetes.io/part-of: analytics-operator
     app.kubernetes.io/managed-by: kustomize
   name: anomalyengine-viewer-role
 rules:
 - apiGroups:
-  - backend.anomaly.io
+  - observability-analytics.redhat.com
   resources:
   - anomalyengines
   verbs:
@@ -20,7 +20,7 @@ rules:
   - list
   - watch
 - apiGroups:
-  - backend.anomaly.io
+  - observability-analytics.redhat.com
   resources:
   - anomalyengines/status
   verbs:

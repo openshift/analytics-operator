@@ -1,12 +1,12 @@
-apiVersion: backend.anomaly.io/v1alpha1
+apiVersion: observability-analytics.redhat.com/v1alpha1
 kind: AnomalyEngine
 metadata:
   labels:
     app.kubernetes.io/name: anomalyengine
     app.kubernetes.io/instance: anomalyengine-sample
-    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/part-of: analytics-operator
     app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: anomaly-operator
+    app.kubernetes.io/created-by: analytics-operator
   name: anomalyengine-sample
 spec:
   namespace: osa-anomaly-detection
@@ -36,7 +36,7 @@ spec:
   cronjobconfig:
     name: "osa-anomaly-detection"
     schedule: "*/1 * * * *"
-    image: quay.io/openshiftanalytics/incluster-anomaly:v1
+    image: quay.io/openshiftanalytics/incluster-anomaly:e2e
     anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
     resource:
       cpurequest: "128m"
