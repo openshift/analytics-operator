@@ -33,7 +33,7 @@ make run
 
 4. Install Instances of Custom Resources:
 ```sh
-kubectl apply -f config/samples/backend_v1alpha1_anomalyengine.yaml
+kubectl apply -f config/samples/observability-analytics_v1alpha1_anomalyengine.yaml
 ```
 
 5. Operator should create related resources like namespace/role/serviceaccount/rolebinding/cronjob etc for given namespace in 4th step sample file. 

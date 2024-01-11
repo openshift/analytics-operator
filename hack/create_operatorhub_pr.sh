@@ -21,23 +21,17 @@ BRANCH=publish-observability-analytics-operator-$VERSION
 FORK=${FORK:-analytics-auto}
 GITHUB_TOKEN=${GITHUB_TOKEN:-$ANALYTICS_AUTO_GITHUB_TOKEN}
 
-IMG_REPOSITORY=${IMG_REPOSITORY:-quay.io/openshiftanalytics}
-
-OPERATOR_IMG=$IMG_REPOSITORY/observability-analytics-operator:$VERSION
-CATALOG_IMG=$IMG_REPOSITORY/observability-analytics-operator-catalog:$VERSION
-BUNDLE_IMG=$IMG_REPOSITORY/observability-analytics-operator-bundle:$VERSION
-
 COMMUNITY_OPERATOR_PROD_GITHUB_ORG=${COMMUNITY_OPERATOR_PROD_GITHUB_ORG:-redhat-openshift-ecosystem}
 
 #If you want to build the operator, and dont want to use the image fro quay uncomment the following line
 #make 
 
 # Build bundle directory
-make bundle IMG=$OPERATOR_IMG
+make bundle VERSION=$VERSION
 
 # Build bundle and catalog images
-make bundle-build bundle-push
-make catalog-build catalog-push
+make bundle-build bundle-push VERSION=$VERSION
+make catalog-build catalog-push VERSION=$VERSION
 
 # Add replaces to dependency graph for upgrade path
 if ! grep -qF 'replaces: anomaly-operator.v${PREV_VERSION}' bundle/manifests/anomaly-operator.clusterserviceversion.yaml; then

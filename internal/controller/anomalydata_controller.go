@@ -1,5 +1,5 @@
 /*
-Copyright 2023 Redhat.
+Copyright 2024 Redhat.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package controllers
+package controller
 
 import (
 	"context"
@@ -25,7 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	backendv1alpha1 "github.com/k8s-analytics/anomaly-operator/api/v1alpha1"
+	observabilityanalyticsv1alpha1 "github.com/openshift/analytics-operator/api/v1alpha1"
 )
 
 // AnomalyDataReconciler reconciles a AnomalyData object
@@ -34,9 +34,9 @@ type AnomalyDataReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalydata,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalydata/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=backend.anomaly.io,resources=anomalydata/finalizers,verbs=update
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalydata,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalydata/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=observability-analytics.redhat.com,resources=anomalydata/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -50,18 +50,7 @@ type AnomalyDataReconciler struct {
 func (r *AnomalyDataReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
-	// // Define the path to your YAML manifest file
-	// manifestPath := "deploy/anomaly_storage_crd_config.yaml"
-
-	// // Create a Manifestival object with the path to your manifest file
-	// manifest, err := mf.NewManifest(manifestPath)
-	// if err != nil {
-	// 	fmt.Printf("Error creating Manifestival: %v\n", err)
-	// 	os.Exit(1)
-	// }
-
-	// // Read the manifest file and apply its resources to the cluster
-	// manifest.Apply(nil)
+	// TODO(user): your logic here
 
 	return ctrl.Result{RequeueAfter: time.Duration(30 * time.Second)}, nil
 }
@@ -69,6 +58,6 @@ func (r *AnomalyDataReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 // SetupWithManager sets up the controller with the Manager.
 func (r *AnomalyDataReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&backendv1alpha1.AnomalyData{}).
+		For(&observabilityanalyticsv1alpha1.AnomalyData{}).
 		Complete(r)
 }

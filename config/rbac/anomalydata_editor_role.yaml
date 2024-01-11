@@ -6,13 +6,13 @@ metadata:
     app.kubernetes.io/name: clusterrole
     app.kubernetes.io/instance: anomalydata-editor-role
     app.kubernetes.io/component: rbac
-    app.kubernetes.io/created-by: anomaly-operator
-    app.kubernetes.io/part-of: anomaly-operator
+    app.kubernetes.io/created-by: analytics-operator
+    app.kubernetes.io/part-of: analytics-operator
     app.kubernetes.io/managed-by: kustomize
   name: anomalydata-editor-role
 rules:
 - apiGroups:
-  - backend.anomaly.io
+  - observability-analytics.redhat.com
   resources:
   - anomalydata
   verbs:
@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - backend.anomaly.io
+  - observability-analytics.redhat.com
   resources:
   - anomalydata/status
   verbs:
