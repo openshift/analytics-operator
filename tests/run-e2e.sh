@@ -10,10 +10,12 @@ source "$PROJECT_ROOT/hack/utils.bash"
 declare -r LOCAL_BIN="$PROJECT_ROOT/tmp/bin"
 export PATH="$LOCAL_BIN:$PATH"
 
+
+declare IMG_BASE='quay.io/openshiftanalytics'
 declare NO_DEPLOY=false
-declare NO_BUILDS=false
+declare NO_BUILD=false
 declare VERSION=e2e-test
-declare ADDITIONAL_TAGS=""
+declare BATCH_SIZE=30
 
 # Deploy operator to openshift cluster
 deploy_operator() {
@@ -26,7 +28,7 @@ deploy_operator() {
 		return 0
 	}
 
-    run make deploy VERSION="$VERSION"
+    run make deploy IMG_BASE="$IMG_BASE" VERSION="$VERSION" 
     wait_for_operators_ready "analytics-operator-system"
 }
 
@@ -34,12 +36,12 @@ deploy_operator() {
 build_and_push() {
 	header "Build Operator Images"
 
-	$NO_BUILDS && {
+	$NO_BUILD && {
 		info "skipping building of images"
 		return 0
 	}
 
-    run make manifests generate operator-build operator-push VERSION="$VERSION" ADDITIONAL_TAGS="$ADDITIONAL_TAGS"
+    run make manifests generate operator-build operator-push IMG_BASE="$IMG_BASE" VERSION="$VERSION"
 
 }
 
@@ -120,6 +122,7 @@ check_pod_for_anomaly_engine(){
 # Ingest namespaces into cluster
 ingest_namespace(){
 
+    info "Ingest Namespaces"
     commands_list=()
 
     for i in {1..100}; do
@@ -137,6 +140,7 @@ ingest_namespace(){
 # Delete ingested namesapces from cluster
 delete_namespaces(){
 
+    info "Delete Namespaces"
     commands_list=()
 
     for i in {1..100}; do
@@ -154,6 +158,7 @@ delete_namespaces(){
 # Ingest Congifmaps into cluster
 ingest_configmaps(){
 
+    info "Ingest Configmaps"
     commands_list=()
 
     for i in {1..600}; do
@@ -171,6 +176,9 @@ ingest_configmaps(){
 
 # Delete ingested configmaps from cluster
 delete_configmaps(){
+
+    info "Delete Configmaps"
+
     commands_list=()
 
     for i in {1..600}; do
@@ -189,13 +197,18 @@ delete_configmaps(){
 run_commands() {
     local commands=("$@")
 
-    for cmd in "${commands[@]}"; do
-        # Run the command in the background
-        eval "$cmd" &
+    for((i=0; i < ${#commands[@]}; i+=$BATCH_SIZE))
+    do
+        part=( "${commands[@]:i:$BATCH_SIZE}" )
+        # echo "Elements in this group: ${part[*]}"
+         for cmd in "${part[@]}"; do
+            # Run the command in the background
+            eval "$cmd" &
+        done
+        
+        # Wait for all background processes to finish
+        wait
     done
-
-    # Wait for all background processes to finish
-    wait
 }
 
 # Inspect namespace anomaly 
@@ -305,8 +318,52 @@ test_configmap_anomaly(){
 # Delete operator and created resources. 
 delete_operator_releated_resources(){
     header "Delete operator and releated resources"
-    run make undeploy VERSION="$VERSION"
+    run make undeploy IMG_BASE="$IMG_BASE" VERSION="$VERSION"
     run kubectl delete namespace "osa-anomaly-detection"
+}
+
+# print configuration/parameters
+print_config() {
+	header "Test Configuration"
+	cat <<-EOF
+		  Image base:      $IMG_BASE
+		  Skip Builds:     $NO_BUILD
+		  Skip Deploy:     $NO_DEPLOY
+		  Version:         $VERSION
+		  Batch Size:      $BATCH_SIZE
+		  Project root:    $PROJECT_ROOT
+	EOF
+	line 50
+}
+
+# parse arguments
+parse_args() {
+	### while there are args parse them
+	while [[ -n "${1+xxx}" ]]; do
+		case $1 in
+		--no-deploy)
+			NO_DEPLOY=true
+			shift
+			;;
+		--no-build)
+			NO_BUILD=true
+			shift
+			;;
+		--image-base)
+			shift
+			IMG_BASE="$1"
+			shift
+			;;
+		--version)
+			shift
+			VERSION="$1"
+			shift
+			;;
+		*) return 1 ;; # show usage on everything else
+		esac
+	done
+
+	return 0
 }
 
 main() {
@@ -314,6 +371,10 @@ main() {
 	info "Inside Main"
     info "PROJECT_ROOT : ${PROJECT_ROOT}"
 
+    parse_args "$@" || die "parse args failed"
+    print_config
+
+    cd "$PROJECT_ROOT"
     info "operator-sdk version $(operator-sdk version)" 
 
     build_and_push

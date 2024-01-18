@@ -34,9 +34,9 @@ make bundle-build bundle-push VERSION=$VERSION
 make catalog-build catalog-push VERSION=$VERSION
 
 # Add replaces to dependency graph for upgrade path
-if ! grep -qF 'replaces: anomaly-operator.v${PREV_VERSION}' bundle/manifests/anomaly-operator.clusterserviceversion.yaml; then
+if ! grep -qF 'replaces: observability-analytics-operator.v${PREV_VERSION}' bundle/manifests/analytics-operator.clusterserviceversion.yaml; then
   sed -i.bak -e "/version: ${VERSION}/a \\
-  replaces: anomaly-operator.v$PREV_VERSION" bundle/manifests/anomaly-operator.clusterserviceversion.yaml
+  replaces: observability-analytics-operator.v$PREV_VERSION" bundle/manifests/analytics-operator.clusterserviceversion.yaml
 fi
 
 
