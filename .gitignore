@@ -4,6 +4,9 @@ build/_test
 bin/
 testbin/
 
+bundle/
+bundle.Dockerfile
+
 # Created by https://www.toptal.com/developers/gitignore/api/go,vim,emacs,visualstudiocode,macos,linux,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=go,vim,emacs,visualstudiocode,macos,linux,intellij
 
