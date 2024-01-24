@@ -68,7 +68,11 @@ wait_for_operators_ready() {
 create_cr_for_anomaly_engine(){
 
     header "Configuring Anomaly Engine by creating CR"
-
+    # temp code 
+    pwd
+    echo "--------"
+    ls .
+    
     kubectl apply -f ./config/samples/observability-analytics_v1alpha1_anomalyengine.yaml
     
     if ! kubectl -n "osa-anomaly-detection" get cronjob | grep "osa-anomaly-detection"; then
