@@ -1,13 +1,13 @@
 # anomaly-operator
-Operator that helps to deploy relevant component to detect anomaly in the cluster. 
+Operator that helps to deploy relevant components to detect anomalies in the cluster. 
 
 ## Description
-We have created setup that works to deletct cluster anomaly using min/max as well as percentange change method to start with. Currently it works with metric data, in future we will incorporate logs/alerts as well. Currently we are targetting openshift as primary platform. 
+We have created a setup that works to detect cluster anomalies using min/max as well as percentage change methods to start with. Currently, it works with metric data, in future we will incorporate logs/alerts as well. Currently, we are targeting OpenShift as the primary platform. 
 
-Also currently we are focusing on Openshift cluster. 
+Also currently we are focusing on Openshift clusters. 
 
 ## Getting Started
-Login into openshift cluster using login command, below is the example of login command. 
+Login into an OpenShift cluster using the login command, below is an example of a login command. 
 
 ```sh
 oc login --token=*** --server=https://example.com:6443
@@ -21,7 +21,7 @@ or
 kubectl apply -f config/crd/bases/
 ```
 
-2. Once installed you can verify it on cluster by running following command. 
+2. Once installed you can verify it on the cluster by running the following command. 
 ```sh
 kubectl get crd | grep anomaly
 ```
@@ -36,12 +36,12 @@ make run
 kubectl apply -f config/samples/observability-analytics_v1alpha1_anomalyengine.yaml
 ```
 
-5. Operator should create related resources like namespace/role/serviceaccount/rolebinding/cronjob etc for given namespace in 4th step sample file. 
+5. The operator should create related resources like namespace/role/serviceaccount/rolebinding/cronjob etc for the given namespace in the 4th step sample file. 
 
-6. Based on given configuration (Ex : configname `anomalyconfigmpname` given in 4th step sample file), cronjob will try to find anomaly and if anything comeup it will add anomaly data into CRD storage which can be queried like below. 
+6. Based on the given configuration (Eg. configname `anomalyconfigmpname` given in the 4th step sample file), the cronjob will try to find anomalies and if anything comes up it will add anomaly data into CRD storage which can be queried like below. 
 ```sh
 oc get anomalydata -n osa-anomaly-detection
-# you can see single anomaly data by below command 
+# you can see single anomaly data with the following command 
 oc describe anomalydata 2023-09-27-08-46-02-etcd-object-namespaces-namespaces -n osa-anomaly-detection
 ```
 
@@ -49,11 +49,11 @@ oc describe anomalydata 2023-09-27-08-46-02-etcd-object-namespaces-namespaces -n
 **NOTE:** You can also run this in one step by running: `make install run`
 
 ### Do e2e Testing
-We have created e2e test script using which we can test operator is working as expected or not into openshift cluster. 
+We have created e2e test script using which we can test operator is working as expected or not in an OpenShift cluster. 
 
 **Prerequisite** : 
-1. You should have access to the container registry for pushing image to regsitry. 
-2. You should have openshift cluster, login into the cluster using the following command from your terminal. 
+1. You should have access to the container registry for pushing images to the registry. 
+2. You should have an OpenShift cluster, login into the cluster using the following command from your terminal. 
 ```sh
 oc login --token=*** --server=https://example.com:6443
 ```
@@ -61,11 +61,11 @@ Then execute the below command to test your operator
 ```sh
 sh tests/run-e2e.sh 
 ```
-This script performs the following operations to validate your operator works as expected in openshift cluster.
-1. Build your operator image and push to the registry.
-2. Deploy the operator into openshift cluster using the created container.
+This script performs the following operations to validate your operator works as expected in the OpenShift cluster.
+1. Build your operator image and push it to the registry.
+2. Deploy the operator into the OpenShift cluster using the created container.
 3. Create CR for the anomaly engine.
-4. Generate anomaly data and test whether the engine is able to detect anomaly or not for Min/Max as well as Percentage Change type. 
+4. Generate anomaly data and test whether the engine can detect an anomaly or not for Min/Max as well as Percentage Change type. 
 5. Delete the operator and related resources from the cluster. 
 6. Finally it should display the message "✅ All looks good :)" if everything works as expected.  
 
@@ -83,10 +83,10 @@ More information can be found via the [Kubebuilder Documentation](https://book.k
 
 ### Running on the cluster using pre-published image
 
-You can use the image from [quay.io](https://quay.io/repository/openshiftanalytics/observability-analytics-operator?tab=tags) to deploy kepler-operator.
+You can use the image from [quay.io](https://quay.io/repository/OpenShiftanalytics/observability-analytics-operator?tab=tags) to deploy kepler-operator.
 
 ```sh
-make deploy OPERATOR_IMG=quay.io/openshiftanalytics/observability-analytics-operator:0.0.1
+make deploy OPERATOR_IMG=quay.io/OpenShiftanalytics/observability-analytics-operator:0.0.1
 kubectl apply -f config/samples/
 ```
 
@@ -119,7 +119,7 @@ make undeploy
 This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
 
 It uses [Controllers](https://kubernetes.io/docs/concepts/architecture/controller/),
-which provide a reconcile function responsible for synchronizing resources until the desired state is reached on the cluster.
+which provides a reconcile function responsible for synchronizing resources until the desired state is reached on the cluster.
 
 ## License
 
