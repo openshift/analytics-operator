@@ -83,10 +83,10 @@ More information can be found via the [Kubebuilder Documentation](https://book.k
 
 ### Running on the cluster using pre-published image
 
-You can use the image from [quay.io](https://quay.io/repository/OpenShiftanalytics/observability-analytics-operator?tab=tags) to deploy kepler-operator.
+You can use the image from [quay.io](https://quay.io/repository/openshiftanalytics/observability-analytics-operator?tab=tags) to deploy analytics-operator.
 
 ```sh
-make deploy OPERATOR_IMG=quay.io/OpenShiftanalytics/observability-analytics-operator:0.0.1
+make deploy OPERATOR_IMG=quay.io/openshiftanalytics/observability-analytics-operator:0.0.1
 kubectl apply -f config/samples/
 ```
 
