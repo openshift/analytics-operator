@@ -1,0 +1,37 @@
+apiVersion: observability-analytics.redhat.com/v1alpha1
+kind: AnomalyEngine
+metadata:
+  labels:
+    app.kubernetes.io/name: anomalyengine
+    app.kubernetes.io/instance: anomalyengine-sample
+    app.kubernetes.io/part-of: analytics-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: analytics-operator
+  name: anomalyengine-sample
+spec:
+  namespace: osa-anomaly-detection
+  serviceaccountrolebinding:
+    name: osa-in-cluster-thanos-querier
+    clusterrolename: cluster-monitoring-view
+  anomalyqueryconfiguration: |
+    etcd_object_namespaces:
+      method: min_max
+      query: max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
+      min: 60
+      max: 100
+    etcd_object_secrets_config_maps:
+      method: percentage_change
+      query: max(apiserver_storage_objects{resource=~"secrets|configmaps"}) by (resource)
+      step: 2  # minutes
+      percentage_change: 60  # percentage
+      period_range: 60  # minutes
+      have_multi_result_data: True
+  cronjobconfig:
+    name: "osa-anomaly-detection"
+    schedule: "*/1 * * * *"
+    anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
+    resource:
+      cpurequest: "128m"
+      memoryrequest: "256Mi"
+      cpulimit: "256m"
+      memorylimit: "512Mi"
