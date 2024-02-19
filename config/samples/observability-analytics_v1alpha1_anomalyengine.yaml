@@ -36,6 +36,7 @@ spec:
   cronjobconfig:
     name: "osa-anomaly-detection"
     schedule: "*/5 * * * *"
+    image: quay.io/openshiftanalytics/incluster-anomaly:latest
     anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
     resource:
       cpurequest: "128m"
