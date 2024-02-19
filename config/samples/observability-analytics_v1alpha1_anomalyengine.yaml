@@ -17,9 +17,9 @@ spec:
     kube_configmap_info:
       method: percentage_change
       query: count(kube_configmap_info)
-      step: 2  # minutes
+      step: 5  # minutes
       percentage_change: 60  # percentage
-      period_range: 60  # minutes
+      period_range: 120  # minutes
       have_multi_result_data: False
     etcd_object_namespaces:
       method: min_max
@@ -29,14 +29,13 @@ spec:
     etcd_object_secrets_config_maps:
       method: percentage_change
       query: max(apiserver_storage_objects{resource=~"secrets|configmaps"}) by (resource)
-      step: 2  # minutes
+      step: 5  # minutes
       percentage_change: 60  # percentage
-      period_range: 60  # minutes
+      period_range: 120  # minutes
       have_multi_result_data: True
   cronjobconfig:
     name: "osa-anomaly-detection"
-    schedule: "*/1 * * * *"
-    image: quay.io/openshiftanalytics/incluster-anomaly:latest
+    schedule: "*/5 * * * *"
     anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
     resource:
       cpurequest: "128m"

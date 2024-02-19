@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: controller
   newName: quay.io/openshiftanalytics/observability-analytics-operator
-  newTag: e2e-test
+  newTag: 0.1.0

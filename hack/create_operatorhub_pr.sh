@@ -2,16 +2,23 @@
 
 # Create PR to Publish analytics-operator to community-operators-prod
 #
-# * Build and Push operator and bundle images and catalog images
+# * Build and Push operator, bundle and catalog images
 # * Push bundle artifacts to a community-operators-prod branch so that a PR can be manually opened from it.
 #
 # Usage:
 #   VERSION is the tag for the operator image in quay,PREV_VERSION is the version we want to replace
-#   FORK is your personal FORK from  community-operators-prod repository 
+#   FORK is your personal FORK from community-operators-prod repository 
+#   if you pass it blank then it won't add 'replace' spec in CSV yaml file
 #   $ VERSION=1.1.2 PREV_VERSION=1.1.1 FORK=<your-fork> PRCREATE=<true/false> ./hack/create_operatorhub_pr.sh
 #
 
 set -e
+
+PROJECT_ROOT="$(git rev-parse --show-toplevel)"
+declare -r PROJECT_ROOT
+
+source "$PROJECT_ROOT/hack/utils.bash"
+export DOCKER_DEFAULT_PLATFORM=linux/amd64
 
 VERSION=${VERSION:-$(make print-VERSION)}
 PREV_VERSION=${PREV_VERSION:-$(make print-PREV_VERSION)}
@@ -23,30 +30,48 @@ GITHUB_TOKEN=${GITHUB_TOKEN:-$ANALYTICS_AUTO_GITHUB_TOKEN}
 
 COMMUNITY_OPERATOR_PROD_GITHUB_ORG=${COMMUNITY_OPERATOR_PROD_GITHUB_ORG:-redhat-openshift-ecosystem}
 
-#If you want to build the operator, and dont want to use the image fro quay uncomment the following line
-#make 
+info "Remove bundle and community-operators-prod folders"
+rm -rf ./bundle
+rm -rf ./community-operators-prod
+
+info "Operator image build and push"
+make operator-build operator-push VERSION=$VERSION
 
 # Build bundle directory
+info "Build Bundle directory"
 make bundle VERSION=$VERSION
 
-# Build bundle and catalog images
-make bundle-build bundle-push VERSION=$VERSION
-make catalog-build catalog-push VERSION=$VERSION
+# Update operator version in CSV
+info "Update operator version in CSV"
+sed -i.bak "s/version: 0.1.0/version: $VERSION/" bundle/manifests/analytics-operator.clusterserviceversion.yaml
+sed -i.bak "s/name: analytics-operator.v0.1.0/name: analytics-operator.v$VERSION/" bundle/manifests/analytics-operator.clusterserviceversion.yaml
 
 # Add replaces to dependency graph for upgrade path
-if ! grep -qF 'replaces: observability-analytics-operator.v${PREV_VERSION}' bundle/manifests/analytics-operator.clusterserviceversion.yaml; then
-  sed -i.bak -e "/version: ${VERSION}/a \\
-  replaces: observability-analytics-operator.v$PREV_VERSION" bundle/manifests/analytics-operator.clusterserviceversion.yaml
+info "Update 'replaces' for upgrade path"
+if ! [[ -z "$PREV_VERSION" ]]; then
+  info "condition satisfied"
+  sed -i.bak "/version: ${VERSION}/a \\
+  replaces: analytics-operator.v$PREV_VERSION" bundle/manifests/analytics-operator.clusterserviceversion.yaml
 fi
 
+# Build bundle and catalog images
+info "Bundle image build and push"
+make bundle-build bundle-push VERSION=$VERSION
+info "Catalog image build and push"
+make catalog-build catalog-push VERSION=$VERSION
 
 # Set Openshift Support Range (bump minKubeVersion in CSV when changing)
+info "Set Openshift Support Range"
 if ! grep -qF 'openshift.versions' bundle/metadata/annotations.yaml; then
   sed -i.bak -e "/annotations:/a \\
-  com.redhat.openshift.versions: v4.12" bundle/metadata/annotations.yaml
+  com.redhat.openshift.versions: v4.14" bundle/metadata/annotations.yaml
 fi
 
-echo "-- Create branch on community-operators-prod fork --"
+info "Remove backup files"
+rm -f bundle/manifests/analytics-operator.clusterserviceversion.yaml.bak
+rm -f bundle/metadata/annotations.yaml.bak
+
+info "Create branch on community-operators-prod fork"
 git clone https://github.com/$COMMUNITY_OPERATOR_PROD_GITHUB_ORG/community-operators-prod.git
 
 mkdir -p community-operators-prod/operators/observability-analytics-operator/$VERSION/
@@ -67,7 +92,7 @@ git push upstream --delete $BRANCH || true
 git push upstream $BRANCH
 
 if $PRCREATE == "true"; then
-  echo "creating pr"
+  info "creating pr"
   gh pr create \
     --title "operator observability-analytics-operator (${VERSION})" \
     --body "operator observability-analytics-operator (${VERSION})" \

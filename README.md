@@ -112,6 +112,28 @@ UnDeploy the controller from the cluster:
 make undeploy
 ```
 
+### How to test oeprator bundle  in the cluster
+
+```sh
+# run bundle -> creates an index image referencing your bundle image, create a catalog source, 
+# deploy your Operator to your cluster by creating an OperatorGroup, Subscription, InstallPlan, 
+# and all other required resources
+operator-sdk run bundle quay.io/openshiftanalytics/observability-analytics-operator-bundle:0.1.0
+
+# cleanup installed operator -> cleanup OperatorGroup, Subscription, InstallPlan, Catalog, etc
+operator-sdk cleanup analytics-operator
+```
+
+### How to test oeprator catalog  in the cluster
+```sh
+# create catalog using a sample file
+kubectl apply -f tests/sample/sample-catalog.yaml
+
+# list available catalog sources
+kubectl get catalogsource --all-namespaces
+```
+If the catalog source is created successfully, you can find "Sample Operator Catalog" in the **Source** list on the Operators -> OperatorHub page. Within this source, you can find the "**Observability Analytics Operator**" operator. You can install the operator from this page and create an **AnomalyEngine** instance once the operator is installed.
+
 ## Contributing
 // TODO(user): Add detailed information on how you would like others to contribute to this project
 
