@@ -69,22 +69,16 @@ create_cr_for_anomaly_engine(){
 
     header "Configuring Anomaly Engine by creating CR"
 
-    # temp code-----start------
-    ls .
-    echo "----------"
-    ls ./
-    echo "----------"
-    ls ./config/samples/
-    echo "----------"
-    # temp code-----end------
-
     info "get anomalyengine"
     kubectl get anomalyengine
 
     info "create anomalyengine instance"
-    kubectl apply -f ./config/samples/observability-analytics_v1alpha1_anomalyengine.yaml
+    kubectl apply -f ./tests/sample/observability-analytics_v1alpha1_anomalyengine.yaml
     
-    sleep 30
+    # Wait for some time until the required components are created.
+    sleep 60
+
+    # Check if the cronjob has been created
     if ! kubectl -n "osa-anomaly-detection" get cronjob | grep "osa-anomaly-detection"; then
         fail "Cronjob not present to detect Anomaly"
         die
@@ -175,7 +169,7 @@ ingest_configmaps(){
     info "Ingest Configmaps"
     commands_list=()
 
-    for i in {1..600}; do
+    for i in {1..800}; do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" create configmap "$configmap_name" --from-literal=key1=value1"
         commands_list+=("$command")
@@ -195,7 +189,7 @@ delete_configmaps(){
 
     commands_list=()
 
-    for i in {1..600}; do
+    for i in {1..800}; do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" delete configmap "$configmap_name""
         commands_list+=("$command")

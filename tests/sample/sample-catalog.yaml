@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: sample-catalog
+  namespace: openshift-marketplace
+spec:
+  sourceType: grpc
+  image: quay.io/openshiftanalytics/observability-analytics-operator-catalog:0.1.0
+  displayName: Sample Operator Catalog
+  publisher: Red hat
+  updateStrategy:
+    registryPoll:
+      interval: 5m

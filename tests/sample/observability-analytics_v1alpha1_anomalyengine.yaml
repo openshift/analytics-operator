@@ -14,13 +14,6 @@ spec:
     name: osa-in-cluster-thanos-querier
     clusterrolename: cluster-monitoring-view
   anomalyqueryconfiguration: |
-    kube_configmap_info:
-      method: percentage_change
-      query: count(kube_configmap_info)
-      step: 5  # minutes
-      percentage_change: 60  # percentage
-      period_range: 120  # minutes
-      have_multi_result_data: False
     etcd_object_namespaces:
       method: min_max
       query: max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
@@ -29,13 +22,13 @@ spec:
     etcd_object_secrets_config_maps:
       method: percentage_change
       query: max(apiserver_storage_objects{resource=~"secrets|configmaps"}) by (resource)
-      step: 5  # minutes
+      step: 2  # minutes
       percentage_change: 60  # percentage
-      period_range: 120  # minutes
+      period_range: 60  # minutes
       have_multi_result_data: True
   cronjobconfig:
     name: "osa-anomaly-detection"
-    schedule: "*/5 * * * *"
+    schedule: "*/1 * * * *"
     image: quay.io/openshiftanalytics/incluster-anomaly:latest
     anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
     resource:
