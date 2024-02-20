@@ -3,6 +3,8 @@ package controller
 import (
 	"context"
 
+	"github.com/openshift/analytics-operator/internal/utils"
+
 	v1alpha1 "github.com/openshift/analytics-operator/api/v1alpha1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -392,7 +394,7 @@ func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, insta
 
 	if err != nil && errors.IsNotFound(err) {
 		// Create the cronjob
-		log.Info("Creating a new cronjob", "name", cronjobName, "image", instance.Spec.CronJobConfig.Image)
+		log.Info("Creating a new cronjob", "name", cronjobName, "image", utils.INCLUSTER_ANOMALY_IMAGE)
 		logLevel := instance.Spec.CronJobConfig.LogLevel
 		if logLevel == "" {
 			logLevel = "DEBUG"
@@ -437,7 +439,7 @@ func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, insta
 								Containers: []corev1.Container{
 									{
 										Name:            cronjobName,
-										Image:           instance.Spec.CronJobConfig.Image,
+										Image:           utils.INCLUSTER_ANOMALY_IMAGE,
 										ImagePullPolicy: corev1.PullPolicy(corev1.PullAlways),
 										Command:         []string{"python"},
 										Args:            []string{"-m", "src.driver", "-aq", instance.Spec.CronJobConfig.AnomalyQueries},

@@ -46,8 +46,6 @@ spec:
                 properties:
                   anomalyqueries:
                     type: string
-                  image:
-                    type: string
                   loglevel:
                     type: string
                   name:

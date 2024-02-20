@@ -39,7 +39,6 @@ type ResourceConfig struct {
 type CronJobConfig struct {
 	Schedule       string         `json:"schedule,omitempty"`
 	Name           string         `json:"name,omitempty"`
-	Image          string         `json:"image,omitempty"`
 	AnomalyQueries string         `json:"anomalyqueries,omitempty"`
 	LogLevel       string         `json:"loglevel,omitempty"`
 	Resource       ResourceConfig `json:"resource,omitempty"`
