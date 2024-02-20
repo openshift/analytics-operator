@@ -112,7 +112,7 @@ UnDeploy the controller from the cluster:
 make undeploy
 ```
 
-### How to test oeprator bundle  in the cluster
+### How to test operator bundle in the cluster
 
 ```sh
 # run bundle -> creates an index image referencing your bundle image, create a catalog source, 
@@ -124,7 +124,7 @@ operator-sdk run bundle quay.io/openshiftanalytics/observability-analytics-opera
 operator-sdk cleanup analytics-operator
 ```
 
-### How to test oeprator catalog  in the cluster
+### How to test operator catalog in the cluster
 ```sh
 # create catalog using a sample file
 kubectl apply -f tests/sample/sample-catalog.yaml
