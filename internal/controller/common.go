@@ -394,7 +394,7 @@ func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, insta
 
 	if err != nil && errors.IsNotFound(err) {
 		// Create the cronjob
-		log.Info("Creating a new cronjob", "name", cronjobName, "image", utils.INCLUSTER_ANOMALY_IMAGE)
+		log.Info("Creating a new cronjob", "name", cronjobName, "image", utils.InclusterAnomalyImage)
 		logLevel := instance.Spec.CronJobConfig.LogLevel
 		if logLevel == "" {
 			logLevel = "DEBUG"
@@ -439,7 +439,7 @@ func (r *AnomalyEngineReconciler) ensureCronJob(request reconcile.Request, insta
 								Containers: []corev1.Container{
 									{
 										Name:            cronjobName,
-										Image:           utils.INCLUSTER_ANOMALY_IMAGE,
+										Image:           utils.InclusterAnomalyImage,
 										ImagePullPolicy: corev1.PullPolicy(corev1.PullAlways),
 										Command:         []string{"python"},
 										Args:            []string{"-m", "src.driver", "-aq", instance.Spec.CronJobConfig.AnomalyQueries},

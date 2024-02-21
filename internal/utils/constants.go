@@ -13,5 +13,10 @@ func getEnv(key, defaultValue string) string {
 	return value
 }
 
-var INCLUSTER_ANOMALY_IMAGE_VERSION = getEnv("INCLUSTER_ANOMALY_IMAGE_VERSION", "latest")
-var INCLUSTER_ANOMALY_IMAGE = "quay.io/openshiftanalytics/incluster-anomaly:" + INCLUSTER_ANOMALY_IMAGE_VERSION
+var InclusterAnomalyImageVersion string
+var InclusterAnomalyImage string
+
+func init() {
+	InclusterAnomalyImageVersion = getEnv("InclusterAnomalyImageVersion", "latest")
+	InclusterAnomalyImage = "quay.io/openshiftanalytics/incluster-anomaly:" + InclusterAnomalyImageVersion
+}
