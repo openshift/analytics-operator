@@ -81,6 +81,17 @@ create_cr_for_anomaly_engine(){
     # Check if the cronjob has been created
     if ! kubectl -n "osa-anomaly-detection" get cronjob | grep "osa-anomaly-detection"; then
         fail "Cronjob not present to detect Anomaly"
+        line 50
+        kubectl get cronjobs --all-namespaces
+
+        kubectl_command="kubectl get pods -n analytics-operator-system --no-headers -o custom-columns=":metadata.name""
+        pod_name=$($kubectl_command)
+        info "manager pod_name : $pod_name"
+
+        kubectl_command="kubectl logs $pod_name -n analytics-operator-system"  
+        pod_logs=$($kubectl_command)
+        info "pod_logs : $pod_logs"
+
         die
     fi
 
