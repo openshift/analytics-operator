@@ -185,10 +185,11 @@ delete_namespaces(){
 # Ingest Congifmaps into cluster
 ingest_configmaps(){
 
+    local configmap_count=$1
     info "Ingest Configmaps"
     commands_list=()
 
-    for i in {1..800}; do
+    for i in $(seq 1 $configmap_count); do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" create configmap "$configmap_name" --from-literal=key1=value1"
         commands_list+=("$command")
@@ -204,11 +205,12 @@ ingest_configmaps(){
 # Delete ingested configmaps from cluster
 delete_configmaps(){
 
+    local configmap_count=$1
     info "Delete Configmaps"
 
     commands_list=()
 
-    for i in {1..800}; do
+    for i in $(seq 1 $configmap_count); do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" delete configmap "$configmap_name""
         commands_list+=("$command")
@@ -337,9 +339,21 @@ test_namespace_anomaly(){
 # Test Configmap Anomaly 
 test_configmap_anomaly(){
     header "Testing for Configmap Anomaly with 'Percentage Change' configuration."
-    ingest_configmaps
+    
+    # find existing configmap counts
+    kubectl_command="kubectl get configmaps -o name --no-headers --all-namespaces"
+    configmaps=$($kubectl_command)
+    # info "configmaps : $configmaps"
+    existing_configmap_count=$(echo "$configmaps" | sed -n '$=') 
+    info "existing_configmap_count : $existing_configmap_count"
+
+    # calculate required configmaps that needs to ingest
+    required_configmaps=$(($existing_configmap_count*65/100))
+    info "required_configmaps : $required_configmaps"
+
+    ingest_configmaps $required_configmaps
     inpsect_configmap_anomaly
-    delete_configmaps
+    delete_configmaps $required_configmaps
 }
 
 # Delete operator and created resources. 
