@@ -10,7 +10,7 @@ source "$PROJECT_ROOT/hack/utils.bash"
 declare -r LOCAL_BIN="$PROJECT_ROOT/tmp/bin"
 export PATH="$LOCAL_BIN:$PATH"
 
-
+declare OPERATOR_IMG=''
 declare IMG_BASE='quay.io/openshiftanalytics'
 declare NO_DEPLOY=false
 declare NO_BUILD=false
@@ -22,13 +22,17 @@ deploy_operator() {
 
     header "Deploy Operator"
 
-
 	$NO_DEPLOY && {
 		info "skipping deploying of operator"
 		return 0
 	}
 
-    run make deploy IMG_BASE="$IMG_BASE" VERSION="$VERSION" 
+    if [[ -z "$OPERATOR_IMG" ]]; then
+        run make deploy IMG_BASE="$IMG_BASE" VERSION="$VERSION"
+    else
+        run make deploy OPERATOR_IMG="$OPERATOR_IMG"
+    fi
+    ok "Operator deployed Successfully"
     wait_for_operators_ready "analytics-operator-system"
 }
 
@@ -41,8 +45,12 @@ build_and_push() {
 		return 0
 	}
 
-    run make manifests generate operator-build operator-push IMG_BASE="$IMG_BASE" VERSION="$VERSION"
-
+    if [[ -z "$OPERATOR_IMG" ]]; then
+        run make manifests generate operator-build operator-push IMG_BASE="$IMG_BASE" VERSION="$VERSION"
+    else
+        run make manifests generate operator-build operator-push OPERATOR_IMG="$OPERATOR_IMG"
+    fi
+    ok "Operator Image built and pushed sucessfully."
 }
 
 # Wait till operator becomes ready 
@@ -345,6 +353,7 @@ delete_operator_releated_resources(){
 print_config() {
 	header "Test Configuration"
 	cat <<-EOF
+		  Operator Image:  $OPERATOR_IMG
 		  Image base:      $IMG_BASE
 		  Skip Builds:     $NO_BUILD
 		  Skip Deploy:     $NO_DEPLOY
@@ -366,6 +375,11 @@ parse_args() {
 			;;
 		--no-build)
 			NO_BUILD=true
+			shift
+			;;
+		--operator-image)
+			shift
+			OPERATOR_IMG="$1"
 			shift
 			;;
 		--image-base)
