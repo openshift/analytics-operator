@@ -10,7 +10,7 @@ source "$PROJECT_ROOT/hack/utils.bash"
 declare -r LOCAL_BIN="$PROJECT_ROOT/tmp/bin"
 export PATH="$LOCAL_BIN:$PATH"
 
-
+declare OPERATOR_IMG=''
 declare IMG_BASE='quay.io/openshiftanalytics'
 declare NO_DEPLOY=false
 declare NO_BUILD=false
@@ -22,13 +22,17 @@ deploy_operator() {
 
     header "Deploy Operator"
 
-
 	$NO_DEPLOY && {
 		info "skipping deploying of operator"
 		return 0
 	}
 
-    run make deploy IMG_BASE="$IMG_BASE" VERSION="$VERSION" 
+    if [[ -z "$OPERATOR_IMG" ]]; then
+        run make deploy IMG_BASE="$IMG_BASE" VERSION="$VERSION"
+    else
+        run make deploy OPERATOR_IMG="$OPERATOR_IMG"
+    fi
+    ok "Operator deployed Successfully"
     wait_for_operators_ready "analytics-operator-system"
 }
 
@@ -41,8 +45,12 @@ build_and_push() {
 		return 0
 	}
 
-    run make manifests generate operator-build operator-push IMG_BASE="$IMG_BASE" VERSION="$VERSION"
-
+    if [[ -z "$OPERATOR_IMG" ]]; then
+        run make manifests generate operator-build operator-push IMG_BASE="$IMG_BASE" VERSION="$VERSION"
+    else
+        run make manifests generate operator-build operator-push OPERATOR_IMG="$OPERATOR_IMG"
+    fi
+    ok "Operator Image built and pushed sucessfully."
 }
 
 # Wait till operator becomes ready 
@@ -81,6 +89,17 @@ create_cr_for_anomaly_engine(){
     # Check if the cronjob has been created
     if ! kubectl -n "osa-anomaly-detection" get cronjob | grep "osa-anomaly-detection"; then
         fail "Cronjob not present to detect Anomaly"
+        line 50
+        kubectl get cronjobs --all-namespaces
+
+        kubectl_command="kubectl get pods -n analytics-operator-system --no-headers -o custom-columns=":metadata.name""
+        pod_name=$($kubectl_command)
+        info "manager pod_name : $pod_name"
+
+        kubectl_command="kubectl logs $pod_name -n analytics-operator-system"  
+        pod_logs=$($kubectl_command)
+        info "pod_logs : $pod_logs"
+
         die
     fi
 
@@ -166,10 +185,11 @@ delete_namespaces(){
 # Ingest Congifmaps into cluster
 ingest_configmaps(){
 
+    local configmap_count=$1
     info "Ingest Configmaps"
     commands_list=()
 
-    for i in {1..800}; do
+    for i in $(seq 1 $configmap_count); do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" create configmap "$configmap_name" --from-literal=key1=value1"
         commands_list+=("$command")
@@ -185,11 +205,12 @@ ingest_configmaps(){
 # Delete ingested configmaps from cluster
 delete_configmaps(){
 
+    local configmap_count=$1
     info "Delete Configmaps"
 
     commands_list=()
 
-    for i in {1..800}; do
+    for i in $(seq 1 $configmap_count); do
         configmap_name="osa-e2e-cm-${i}"
         command="kubectl -n "osa-anomaly-detection" delete configmap "$configmap_name""
         commands_list+=("$command")
@@ -318,9 +339,21 @@ test_namespace_anomaly(){
 # Test Configmap Anomaly 
 test_configmap_anomaly(){
     header "Testing for Configmap Anomaly with 'Percentage Change' configuration."
-    ingest_configmaps
+    
+    # find existing configmap counts
+    kubectl_command="kubectl get configmaps -o name --no-headers --all-namespaces"
+    configmaps=$($kubectl_command)
+    # info "configmaps : $configmaps"
+    existing_configmap_count=$(echo "$configmaps" | sed -n '$=') 
+    info "existing_configmap_count : $existing_configmap_count"
+
+    # calculate required configmaps that needs to ingest
+    required_configmaps=$(($existing_configmap_count*65/100))
+    info "required_configmaps : $required_configmaps"
+
+    ingest_configmaps $required_configmaps
     inpsect_configmap_anomaly
-    delete_configmaps
+    delete_configmaps $required_configmaps
 }
 
 # Delete operator and created resources. 
@@ -334,6 +367,7 @@ delete_operator_releated_resources(){
 print_config() {
 	header "Test Configuration"
 	cat <<-EOF
+		  Operator Image:  $OPERATOR_IMG
 		  Image base:      $IMG_BASE
 		  Skip Builds:     $NO_BUILD
 		  Skip Deploy:     $NO_DEPLOY
@@ -355,6 +389,11 @@ parse_args() {
 			;;
 		--no-build)
 			NO_BUILD=true
+			shift
+			;;
+		--operator-image)
+			shift
+			OPERATOR_IMG="$1"
 			shift
 			;;
 		--image-base)
