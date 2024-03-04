@@ -20,14 +20,15 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// ServiceAccountRoleBinding defines Service account role binding properties
+// ServiceAccountRoleBinding defines Service account role binding properties to support AnomalyEngine
 type ServiceAccountRoleBinding struct {
-	Name            string `json:"name,omitempty"`
+	// Name of the Service Account
+	Name string `json:"name,omitempty"`
+	//  Name of the Cluster Role which have view/read access to mornitoring/thanos-api
 	ClusterRoleName string `json:"clusterrolename,omitempty"`
-	SATokenName     string `json:"satokenname,omitempty"`
 }
 
-// ResourceConfig defines cpu/memory resource properties
+// ResourceConfig defines cpu/memory resource properties required for AnomalyEngine pod
 type ResourceConfig struct {
 	CPURequest    string `json:"cpurequest,omitempty"`
 	CPULimit      string `json:"cpulimit,omitempty"`
@@ -37,15 +38,20 @@ type ResourceConfig struct {
 
 // CronJobConfig defines configuration required to setup cronjob
 type CronJobConfig struct {
-	Schedule       string         `json:"schedule,omitempty"`
-	Name           string         `json:"name,omitempty"`
-	AnomalyQueries string         `json:"anomalyqueries,omitempty"`
-	LogLevel       string         `json:"loglevel,omitempty"`
-	Resource       ResourceConfig `json:"resource,omitempty"`
+	// Schedule for the cronjob
+	Schedule string `json:"schedule,omitempty"`
+	// Name of the cronjob
+	Name string `json:"name,omitempty"`
+	// Comma-separated keys from anomalyqueryconfiguration. If not defined, the system will go through all the defined configurations. For example, if there are five configurations defined but we only want to run two for the time being, then those specific keys need to be defined here.
+	AnomalyQueries string `json:"anomalyqueries,omitempty"`
+	// Pod log level - DEBUG/INFO/ERROR etc
+	LogLevel string         `json:"loglevel,omitempty"`
+	Resource ResourceConfig `json:"resource,omitempty"`
 }
 
 // AnomalyEngineSpec defines the desired state of AnomalyEngine
 type AnomalyEngineSpec struct {
+	// The namespace under which Anomaly Engine cronjobs will run
 	Namespace                 string                    `json:"namespace,omitempty"`
 	ServiceAccountRoleBinding ServiceAccountRoleBinding `json:"serviceaccountrolebinding,omitempty"`
 	CronJobConfig             CronJobConfig             `json:"cronjobconfig,omitempty"`
