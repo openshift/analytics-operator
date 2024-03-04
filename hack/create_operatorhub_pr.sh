@@ -74,15 +74,15 @@ rm -f bundle/metadata/annotations.yaml.bak
 info "Create branch on community-operators-prod fork"
 git clone https://github.com/$COMMUNITY_OPERATOR_PROD_GITHUB_ORG/community-operators-prod.git
 
-mkdir -p community-operators-prod/operators/observability-analytics-operator/$VERSION/
-cp -r bundle/* community-operators-prod/operators/observability-analytics-operator/$VERSION/
-pushd community-operators-prod/operators/observability-analytics-operator/$VERSION/
+mkdir -p community-operators-prod/operators/analytics-operator/$VERSION/
+cp -r bundle/* community-operators-prod/operators/analytics-operator/$VERSION/
+pushd community-operators-prod/operators/analytics-operator/
 
 git checkout -b $BRANCH
 git add ./
 git status
 
-message='operator [N] [CI] observability-analytics-operator'
+message='operator [N] [CI] analytics-operator'
 commitMessage="${message} ${VERSION}"
 git commit -m "$commitMessage" -s
 
@@ -94,8 +94,8 @@ git push upstream $BRANCH
 if $PRCREATE == "true"; then
   info "creating pr"
   gh pr create \
-    --title "operator observability-analytics-operator (${VERSION})" \
-    --body "operator observability-analytics-operator (${VERSION})" \
+    --title "operator analytics-operator (${VERSION})" \
+    --body "operator analytics-operator (${VERSION})" \
     --base main \
     --head $FORK:$BRANCH \
     --repo $COMMUNITY_OPERATOR_PROD_GITHUB_ORG/community-operators-prod

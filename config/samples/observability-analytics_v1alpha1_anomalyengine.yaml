@@ -14,29 +14,43 @@ spec:
     name: osa-in-cluster-thanos-querier
     clusterrolename: cluster-monitoring-view
   anomalyqueryconfiguration: |
-    kube_configmap_info:
+    etcd_objects_all:
       method: percentage_change
-      query: count(kube_configmap_info)
-      step: 5  # minutes
-      percentage_change: 60  # percentage
-      period_range: 120  # minutes
-      have_multi_result_data: False
-    etcd_object_namespaces:
-      method: min_max
-      query: max(apiserver_storage_objects{resource=~"namespaces"}) by (resource)
-      min: 60
-      max: 100
-    etcd_object_secrets_config_maps:
-      method: percentage_change
-      query: max(apiserver_storage_objects{resource=~"secrets|configmaps"}) by (resource)
+      query: max(apiserver_storage_objects{resource!~"certificatesigningrequests.certificates.k8s.io|installplans.operators.coreos.com|operators.operators.coreos.com|subscriptions.operators.coreos.com|anomalydata.observability-analytics.redhat.com"}) by (resource)
       step: 5  # minutes
       percentage_change: 60  # percentage
       period_range: 120  # minutes
       have_multi_result_data: True
+    workload_memory_usage_bytes:
+      method: percentage_change
+      query: sum(container_memory_working_set_bytes{namespace!~"openshift-.+",pod!="",container=""})
+      step: 5  # minutes
+      percentage_change: 60  # percentage
+      period_range: 120  # minutes
+      have_multi_result_data: False
+    workload_cpu_usage_cores:
+      method: percentage_change
+      query: sum(container_cpu_usage_seconds_total{namespace!~"openshift-.+",pod!="",container=""})
+      step: 5  # minutes
+      percentage_change: 60  # percentage
+      period_range: 120  # minutes
+      have_multi_result_data: False
+    rest_client_requests_total:
+      method: percentage_change
+      query: sum(rest_client_requests_total)
+      step: 5  # minutes
+      percentage_change: 60  # percentage
+      period_range: 120  # minutes
+      have_multi_result_data: False
+    scheduler_pending_pods:
+      method: min_max
+      query: sum(scheduler_pending_pods{queue=~"backoff|unschedulable"}) by (queue)
+      min: 0
+      max: 10
   cronjobconfig:
     name: "osa-anomaly-detection"
     schedule: "*/5 * * * *"
-    anomalyqueries: "etcd_object_secrets_config_maps,etcd_object_namespaces"
+    anomalyqueries: "etcd_objects_all,workload_memory_usage_bytes,workload_cpu_usage_cores,rest_client_requests_total,scheduler_pending_pods"
     resource:
       cpurequest: "128m"
       memoryrequest: "256Mi"

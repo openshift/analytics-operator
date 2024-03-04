@@ -45,13 +45,21 @@ spec:
                   cronjob
                 properties:
                   anomalyqueries:
+                    description: Comma-separated keys from anomalyqueryconfiguration.
+                      If not defined, the system will go through all the defined configurations.
+                      For example, if there are five configurations defined but we
+                      only want to run two for the time being, then those specific
+                      keys need to be defined here.
                     type: string
                   loglevel:
+                    description: Pod log level - DEBUG/INFO/ERROR etc
                     type: string
                   name:
+                    description: Name of the cronjob
                     type: string
                   resource:
                     description: ResourceConfig defines cpu/memory resource properties
+                      required for AnomalyEngine pod
                     properties:
                       cpulimit:
                         type: string
@@ -63,19 +71,23 @@ spec:
                         type: string
                     type: object
                   schedule:
+                    description: Schedule for the cronjob
                     type: string
                 type: object
               namespace:
+                description: The namespace under which Anomaly Engine cronjobs will
+                  run
                 type: string
               serviceaccountrolebinding:
                 description: ServiceAccountRoleBinding defines Service account role
-                  binding properties
+                  binding properties to support AnomalyEngine
                 properties:
                   clusterrolename:
+                    description: Name of the Cluster Role which have view/read access
+                      to mornitoring/thanos-api
                     type: string
                   name:
-                    type: string
-                  satokenname:
+                    description: Name of the Service Account
                     type: string
                 type: object
             type: object
