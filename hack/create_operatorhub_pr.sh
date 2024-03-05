@@ -43,15 +43,17 @@ make bundle VERSION=$VERSION
 
 # Update operator version in CSV
 info "Update operator version in CSV"
-sed -i.bak "s/version: 0.1.0/version: $VERSION/" bundle/manifests/analytics-operator.clusterserviceversion.yaml
-sed -i.bak "s/name: analytics-operator.v0.1.0/name: analytics-operator.v$VERSION/" bundle/manifests/analytics-operator.clusterserviceversion.yaml
+CSV_FILE_PATH="bundle/manifests/analytics-operator.clusterserviceversion.yaml"
+sed -i.bak "s/version: 0.1.0/version: $VERSION/" $CSV_FILE_PATH
+sed -i.bak "s/name: analytics-operator.v0.1.0/name: analytics-operator.v$VERSION/" $CSV_FILE_PATH
+sed -i.bak "s/observability-analytics-operator:0.1.0/observability-analytics-operator:$VERSION/" $CSV_FILE_PATH
 
 # Add replaces to dependency graph for upgrade path
 info "Update 'replaces' for upgrade path"
 if ! [[ -z "$PREV_VERSION" ]]; then
   info "condition satisfied"
   sed -i.bak "/version: ${VERSION}/a \\
-  replaces: analytics-operator.v$PREV_VERSION" bundle/manifests/analytics-operator.clusterserviceversion.yaml
+  replaces: analytics-operator.v$PREV_VERSION" $CSV_FILE_PATH
 fi
 
 # Build bundle and catalog images
@@ -62,14 +64,15 @@ make catalog-build catalog-push VERSION=$VERSION
 
 # Set Openshift Support Range (bump minKubeVersion in CSV when changing)
 info "Set Openshift Support Range"
-if ! grep -qF 'openshift.versions' bundle/metadata/annotations.yaml; then
+ANNOTATIONS_FILE_PATH="bundle/metadata/annotations.yaml"
+if ! grep -qF 'openshift.versions' $ANNOTATIONS_FILE_PATH; then
   sed -i.bak -e "/annotations:/a \\
-  com.redhat.openshift.versions: v4.14" bundle/metadata/annotations.yaml
+  com.redhat.openshift.versions: v4.14" $ANNOTATIONS_FILE_PATH
 fi
 
 info "Remove backup files"
-rm -f bundle/manifests/analytics-operator.clusterserviceversion.yaml.bak
-rm -f bundle/metadata/annotations.yaml.bak
+rm -f $CSV_FILE_PATH.bak
+rm -f $ANNOTATIONS_FILE_PATH.bak
 
 info "Create branch on community-operators-prod fork"
 git clone https://github.com/$COMMUNITY_OPERATOR_PROD_GITHUB_ORG/community-operators-prod.git
