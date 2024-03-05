@@ -4,9 +4,13 @@ metadata:
   annotations:
     alm-examples: '[]'
     capabilities: Basic Install
+    categories: OpenShift Optional
+    containerImage: quay.io/openshiftanalytics/observability-analytics-operator:0.1.0
     description: Deploys and Manages Observability Analytics Operator
     operators.operatorframework.io/builder: operator-sdk-v1.31.0
+    operators.operatorframework.io/project_layout: go.kubebuilder.io/v3
     repository: https://github.com/openshift/analytics-operator
+    support: RedHat
   name: analytics-operator.v0.1.0
   namespace: placeholder
 spec:
@@ -73,10 +77,6 @@ spec:
   - name: Analytics Operator
     url: https://analytics-operator.domain
   maintainers:
-  - email: acoba@redhat.com
-    name: Anxhela
-  - email: dvandra@redhat.com
-    name: Darshan
   - email: rzalavad@redhat.com
     name: Raj
   maturity: alpha
