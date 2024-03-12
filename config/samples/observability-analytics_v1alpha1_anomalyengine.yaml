@@ -16,7 +16,7 @@ spec:
   anomalyqueryconfiguration: |
     etcd_objects_all:
       method: percentage_change
-      query: max(apiserver_storage_objects{resource!~"certificatesigningrequests.certificates.k8s.io|installplans.operators.coreos.com|operators.operators.coreos.com|subscriptions.operators.coreos.com|anomalydata.observability-analytics.redhat.com"}) by (resource)
+      query: max(apiserver_storage_objects{resource!~"certificatesigningrequests.certificates.k8s.io|installplans.operators.coreos.com|operators.operators.coreos.com|subscriptions.operators.coreos.com|anomalydata.observability-analytics.redhat.com|anomalyengines.observability-analytics.redhat.com"}) by (resource)
       step: 5  # minutes
       percentage_change: 60  # percentage
       period_range: 120  # minutes
@@ -51,7 +51,7 @@ spec:
   cronjobconfig:
     name: "osa-anomaly-detection"
     schedule: "*/5 * * * *"
-    anomalyqueries: "etcd_objects_all,workload_memory_usage_bytes,workload_cpu_usage_cores,rest_client_requests_total,scheduler_pending_pods"
+    anomalyqueries: "etcd_objects_all,failed_pods,workload_memory_usage_bytes,workload_cpu_usage_cores,rest_client_requests_total"
     resource:
       cpurequest: "128m"
       memoryrequest: "256Mi"
