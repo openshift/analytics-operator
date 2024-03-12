@@ -33,18 +33,23 @@ spec:
     may introduce a change that is **NOT** backward-compatible with the previous version.
     Thus, to upgrade the operator, uninstall the already installed version completely
     (including CRDs) and install the new version.\n\n### Installtion Steps for the
-    Anomaly Engine\nOnce you install the Observability Analytics operator, wait until
-    you see the operator in the **Installed Operator** list. Click on the Operator
-    name and go to Operator details.\n\nHere you should see a tab called **Anomaly
-    Engine**. Click on it, and then click on the **Create AnomalyEngine** button,
-    which will redirect you to a form where you need to provide the required inputs
-    for the Anomaly Engine. Once successfully created, you should see a cronjob in
-    the given namespace. This cronjob will identify anomalies and store them into
+    Anomaly Engine\n Create namespace if you would like to install this operator into
+    separate namespace (You can utilize existing namespace as well). ```bash kubectl
+    create ns <Namespace> ``` Install the Observability Analytics operator to specific
+    `<Namespace>`, wait until you see the operator in the **Installed Operator** list.
+    Click on the Operator name and go to Operator details.\n\nHere you should see
+    a tab called **Anomaly Engine**. Click on it, and then click on the **Create AnomalyEngine**
+    button, which will redirect you to a form where you need to provide the required
+    inputs for the Anomaly Engine. Once successfully created, you should see a cronjob
+    in the given namespace. This cronjob will identify anomalies and store them into
     **anomalydata**.\n\n### How to See Anomaly Data Captured by Anomaly Engine?\nWe
-    are storing anomaly data into CR. You can check detected anomalies using the following
-    command from your terminal. (As of now, we don't have any UI to showcase this
-    data in the cluster)\n\n```bash\nkubectl get anomalydata -n <Namespace>\nkubectl
-    describe anomalydata <NAME of the anomalydata> -n <Namespace> \n```\n\n### Documentation\nDocumentation
+    are storing anomaly data into CR.\n ####Option 1:Through `kubectl`` command\nYou
+    can check detected anomalies using the following command from your terminal. \n\n```bash\nkubectl
+    get anomalydata -n <Namespace>\nkubectl describe anomalydata <NAME of the anomalydata>
+    -n <Namespace> \n```\n #### Option 2: From Installed Operator UI Go to installed
+    operator and select **Observability Analytics** operator, now go to **Anomaly
+    Data** tab where you can able to see the detected anomaly, click on specific anomaly
+    and you should be able to see details of the same. ### Documentation\nDocumentation
     around how to test Operator codebase as a developer can be found [here](https://github.com/openshift/analytics-operator#readme)\n\n###
     Contributing\nYou can contribute by:\n  * Raising [issues](https://github.com/openshift/analytics-operator/issues)\n
     \   related to observability-analytics-operator\n  * Fixing issues by opening
