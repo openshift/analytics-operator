@@ -348,7 +348,7 @@ test_configmap_anomaly(){
     info "existing_configmap_count : $existing_configmap_count"
 
     # calculate required configmaps that needs to ingest
-    required_configmaps=$(($existing_configmap_count*65/100))
+    required_configmaps=$(($existing_configmap_count*110/100))
     info "required_configmaps : $required_configmaps"
 
     ingest_configmaps $required_configmaps
